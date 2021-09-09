@@ -10,7 +10,7 @@ import UIKit
 class ViewController: UIViewController {
     
     private var pressedCalc: Bool = false
-    private var firstNumString: String = ""
+    private var mainNumString: String = ""
     
     @IBOutlet weak var displayLabel: UILabel!
     
@@ -21,98 +21,64 @@ class ViewController: UIViewController {
             
             if calcMethod == "+/-" {
                 // +/- sign operation - multiplies with -1
-                if firstNumString == "0" || firstNumString == "0."{
+                if mainNumString == "0" || mainNumString == "0."{
                     return
                 } else {
-                    if firstNumString.contains("0.") {
+                    if mainNumString.contains("0.") {
                         displayLabel.text = String(Double(displayLabel.text!)! * -1)
                     } else {
-                        displayLabel.text = String(format: "%.\(firstNumString.count + 1)g", Double(displayLabel.text!)! * -1)
+                        displayLabel.text = String(format: "%.\(mainNumString.count + 1)g", Double(displayLabel.text!)! * -1)
                     }
                 }
             }
             else if calcMethod == "AC" {
                 // AC operation - resets to 0
-                firstNumString = ""
+                mainNumString = ""
                 displayLabel.text = String("0")
             }
             else if calcMethod == "%" {
                 // % operation - divides with 100
-                if firstNumString == "" || firstNumString == "0."{
+                if mainNumString == "" || mainNumString == "0."{
                     return
                 } else {
-                    displayLabel.text = String(format: "%.\(firstNumString.count + 1)g", Double(firstNumString)! * 0.01)
-                    firstNumString = displayLabel.text!
+                    displayLabel.text = String(format: "%.\(mainNumString.count + 1)g", Double(mainNumString)! * 0.01)
+                    mainNumString = displayLabel.text!
                 }
             }
         }
     }
     
+    private var didEnterFirstNum: Bool = false
+    
+    func updateDisplay(newEntry sender: UIButton) {
+        mainNumString += sender.currentTitle!
+        displayLabel.text! = mainNumString
+    }
+    
     @IBAction func numButtonPressed(_ sender: UIButton) {
-        //What should happen when a number is entered into the keypad
+        //Run when a number is pressed on the keypad
         
-        if let newEntry = sender.currentTitle {
+        if var newEntry = sender.currentTitle {
             
-            if (newEntry == "." || newEntry == "0") {
-                // If the first number is . or 0
-                
-                if firstNumString.count < 2 {
-                    // Checks the first number for 0 and .
-                    
-                    if newEntry != "0" && newEntry != "." {
-                        calculateAndRefreshDisplay()
-                    } else {
-                        if newEntry == "." {
-                            if firstNumString == "" {
-                                calculateAndRefreshDisplayPointZero()
-                                return
-                            } else {
-                                calculateAndRefreshDisplay()
-                            }
-                        } else if newEntry == "0" {
-                            if firstNumString == "" {
-                                calculateAndRefreshDisplayPointZero()
-                                return
-                            } else {
-                                calculateAndRefreshDisplay()
-                            }
-                        }
-                    }
+            if !didEnterFirstNum {
+                if newEntry == "0" || newEntry == "." {
+                    newEntry = "0."
+                    updateDisplay(newEntry: sender)
+                    didEnterFirstNum = true
                 } else {
-                    if newEntry == "." {
-                        if firstNumString.contains(".") {
-                            return
-                        } else {
-                            calculateAndRefreshDisplay()
-                        }
-                    } else {
-                        calculateAndRefreshDisplay()
-                    }
+                    updateDisplay(newEntry: sender)
+                    didEnterFirstNum = true
                 }
             } else {
-                // If first number is not . or 0
-                if newEntry == "." {
-                    if firstNumString.contains(".") {
-                        return
-                    } else {
-                        calculateAndRefreshDisplay()
-                    }
+                if newEntry == "." && mainNumString.contains(".") {
+                    return
+                } else {
+                    updateDisplay(newEntry: sender)
                 }
-                calculateAndRefreshDisplay()
-            }
-            
-            func calculateAndRefreshDisplay() {
-                // Adds new characters to display
-                displayLabel.text = firstNumString + newEntry
-                firstNumString += newEntry
-            }
-            
-            func calculateAndRefreshDisplayPointZero() {
-                // Adds new characters to display starting with 0.
-                displayLabel.text = "0."
-                firstNumString = displayLabel.text!
             }
         }
+        
+        
     }
 }
 
