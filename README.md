@@ -12,7 +12,3 @@ Feel free to contribute. This will help me to better understand Swift and to bec
 ## Author
 
 This app was made by me, Miroslav Mali. If you want to contact me, you can send me mixlaproduction@gmail.com.
-
-## Credits
-
-/
